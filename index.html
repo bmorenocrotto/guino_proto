@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#FAF8DB">
+  <title>Guiño · Panel de oferentes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Inclusive+Sans:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ============ BARRA SUPERIOR (compartida) ============ -->
+  <header class="topbar" id="topbar">
+    <button class="icon-btn" id="openMenu" aria-label="Abrir menú" aria-controls="drawer" aria-expanded="false">
+      <svg viewBox="0 0 24 24"><path d="M3 7h18M3 12h12M3 17h18"/></svg>
+    </button>
+    <a href="#inicio" class="wordmark" aria-label="Guiño, inicio">GUIÑO</a>
+    <button class="icon-btn has-dot" aria-label="Notificaciones: 3 nuevas">
+      <svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15L6 16Z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
+    </button>
+  </header>
+
+  <main>
+    <!-- ============ INICIO ============ -->
+    <section id="inicio" class="section hero" data-section="inicio">
+      <div class="live-row">
+        <span class="live-pill" id="livePill"><i></i> EN VIVO · visible a 500 m</span>
+        <span class="date">Vie 6 nov · 20:14</span>
+      </div>
+      <h1 class="h-display">Hola,<br><span class="hl">Café Miller.</span></h1>
+      <p class="lead">Te quedan <b>6 mesas</b> y <b>4 cupos</b> libres para hoy. Hacé un guiño y llenalos antes de las 22&nbsp;h.</p>
+      <button class="btn btn-sol btn-xl" data-open-sheet>
+        Publicar cupo ahora
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg>
+      </button>
+    </section>
+
+    <!-- KPIs -->
+    <section class="kpis" aria-label="Resumen de hoy">
+      <article class="kpi kpi-dark">
+        <span class="kpi-label">Visitas hoy</span>
+        <strong class="kpi-num" data-count="1284">0</strong>
+        <span class="kpi-delta up">▲ 18% vs. viernes pasado</span>
+      </article>
+      <article class="kpi">
+        <span class="kpi-label">Reservas por Guiño</span>
+        <strong class="kpi-num" data-count="23">0</strong>
+        <span class="kpi-delta">61 personas sentadas</span>
+      </article>
+      <article class="kpi">
+        <span class="kpi-label">Ocupación ahora</span>
+        <strong class="kpi-num"><span data-count="72">0</span>%</strong>
+        <div class="meter"><i style="width:72%"></i></div>
+      </article>
+      <article class="kpi kpi-sol">
+        <span class="kpi-label">Ingresos por Guiño</span>
+        <strong class="kpi-num kpi-num-sm">$486.300</strong>
+        <span class="kpi-delta">hoy, hasta ahora</span>
+      </article>
+    </section>
+
+    <!-- OFERTAS -->
+    <section class="section" id="ofertas" data-section="inicio">
+      <div class="sec-head">
+        <span class="eyebrow">Tus ofertas en vivo</span>
+        <h2 class="h-sec">Lo que se está viendo<br>ahora mismo</h2>
+      </div>
+      <div class="filters" role="tablist" aria-label="Filtrar ofertas">
+        <button class="chip is-on" data-filter="todas">Todas · <span id="cntTodas">4</span></button>
+        <button class="chip" data-filter="reservado">Reservadas</button>
+        <button class="chip" data-filter="libre">Sin reservar</button>
+      </div>
+      <div class="offers" id="offers"><!-- render js --></div>
+    </section>
+
+    <!-- ============ ÍNDICE DE VISITAS ============ -->
+    <section class="section band" id="visitas" data-section="visitas">
+      <div class="sec-head">
+        <span class="eyebrow">Índice de visitas</span>
+        <h2 class="h-sec">Quién te mira,<br>cuándo y desde dónde</h2>
+      </div>
+
+      <div class="seg" role="tablist" aria-label="Período">
+        <button class="is-on" data-range="hoy">Hoy</button>
+        <button data-range="semana">7 días</button>
+        <button data-range="mes">30 días</button>
+      </div>
+
+      <div class="card chart-card" id="visitas-hora">
+        <div class="chart-top">
+          <div>
+            <span class="muted sm">Visitas al perfil</span>
+            <strong class="big-num" id="chartTotal">1.284</strong>
+          </div>
+          <span class="tag tag-sol" id="chartPeak">Pico 20–22 h</span>
+        </div>
+        <div class="bars" id="bars" aria-label="Gráfico de visitas"></div>
+        <div class="bars-axis" id="barsAxis"></div>
+      </div>
+
+      <div class="funnel card">
+        <span class="eyebrow dark">Del vistazo a la mesa</span>
+        <ol class="funnel-steps">
+          <li><span>Vieron tu oferta</span><b>1.284</b><i style="--w:100%"></i></li>
+          <li><span>Abrieron el detalle</span><b>436</b><i style="--w:34%"></i></li>
+          <li><span>Tocaron “Cómo llegar”</span><b>118</b><i style="--w:9.2%"></i></li>
+          <li><span>Reservaron</span><b>23</b><i style="--w:1.8%"></i></li>
+        </ol>
+        <p class="sm muted">Conversión vista → reserva: <b>1,8%</b>. El promedio de cafés en Palermo Soho es 1,2%.</p>
+      </div>
+
+      <div class="grid-2" id="visitas-fuentes">
+        <div class="card">
+          <span class="eyebrow dark">De dónde llegan</span>
+          <ul class="share">
+            <li><span>Cerca tuyo (&lt; 500 m)</span><b>58%</b><i style="--w:58%"></i></li>
+            <li><span>Feed “Descubrí”</span><b>27%</b><i style="--w:27%"></i></li>
+            <li><span>Búsqueda</span><b>15%</b><i style="--w:15%"></i></li>
+          </ul>
+        </div>
+        <div class="card card-dark" id="visitas-viajeros">
+          <span class="eyebrow">Quiénes son</span>
+          <ul class="share share-dark">
+            <li><span>Argentina</span><b>31%</b><i style="--w:31%"></i></li>
+            <li><span>Brasil</span><b>22%</b><i style="--w:22%"></i></li>
+            <li><span>España</span><b>14%</b><i style="--w:14%"></i></li>
+            <li><span>Otros</span><b>33%</b><i style="--w:33%"></i></li>
+          </ul>
+          <p class="sm">Caminan en promedio <b>640 m</b> hasta tu puerta.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CUPOS DE HOY ============ -->
+    <section class="section" id="hoy" data-section="hoy">
+      <div class="sec-head">
+        <span class="eyebrow">Oferta de cupos · hoy</span>
+        <h2 class="h-sec">Tu noche,<br>turno por turno</h2>
+      </div>
+
+      <div class="alert" id="hoy-sinconfirmar">
+        <svg viewBox="0 0 24 24"><path d="M12 8v5M12 16.5v.5"/><circle cx="12" cy="12" r="9"/></svg>
+        <div>
+          <b>2 reservas sin confirmar a las 21:00</b>
+          <p class="sm">Si no confirman en 30 min, liberamos la mesa en Guiño.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" data-toast="Recordatorio enviado a 2 reservas.">Avisar</button>
+      </div>
+
+      <ol class="timeline" id="hoy-turnos"><!-- render js --></ol>
+
+      <div class="card waitlist" id="hoy-espera">
+        <div class="row-between">
+          <div>
+            <span class="eyebrow dark">Lista de espera</span>
+            <h3 class="h-card">3 grupos esperando</h3>
+          </div>
+          <span class="tag">~15 min</span>
+        </div>
+        <ul class="wl">
+          <li><span class="av" style="--c:#FEDE2E">LM</span><div><b>Lucía M.</b><span class="sm muted">2 personas · Brasil · a 120 m</span></div><button class="btn btn-sm btn-dark" data-toast="Le avisamos a Lucía que su mesa está lista.">Sentar</button></li>
+          <li><span class="av" style="--c:#DEBD06">JP</span><div><b>Joaquín P.</b><span class="sm muted">4 personas · Argentina · a 300 m</span></div><button class="btn btn-sm btn-dark" data-toast="Le avisamos a Joaquín que su mesa está lista.">Sentar</button></li>
+          <li><span class="av" style="--c:#9E8B23">AR</span><div><b>Ana R.</b><span class="sm muted">2 personas · España · a 450 m</span></div><button class="btn btn-sm btn-dark" data-toast="Le avisamos a Ana que su mesa está lista.">Sentar</button></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ CUPOS FUTUROS ============ -->
+    <section class="section band" id="futuros" data-section="futuros">
+      <div class="sec-head">
+        <span class="eyebrow">Oferta de cupos futuros</span>
+        <h2 class="h-sec">Adelantate:<br>los próximos 7 días</h2>
+      </div>
+
+      <div class="days" id="futuros-calendario" role="tablist" aria-label="Elegí un día"><!-- render js --></div>
+
+      <div class="card forecast" id="forecast"><!-- render js --></div>
+
+      <div id="futuros-programados">
+        <div class="row-between list-head">
+          <h3 class="h-card">Programados</h3>
+          <button class="link" data-open-sheet>+ Programar cupo</button>
+        </div>
+        <div class="sched" id="sched"><!-- render js --></div>
+      </div>
+    </section>
+
+    <!-- ============ RESEÑAS ============ -->
+    <section class="section" id="resenas" data-section="resenas">
+      <div class="sec-head">
+        <span class="eyebrow">Lo que dicen</span>
+        <h2 class="h-sec h-spoiler">Spoiler:<br><span class="hl">valió el desvío.</span></h2>
+      </div>
+      <div class="reviews">
+        <figure class="review">
+          <div class="stars" aria-label="5 de 5">★★★★★</div>
+          <blockquote>“Íbamos al MALBA, vimos el guiño a 2 cuadras y terminamos tomando vermut en la vereda hasta las 10. Mejor plan del viaje.”</blockquote>
+          <figcaption><b>Mariana</b> · São Paulo · Cata de vermut</figcaption>
+        </figure>
+        <figure class="review review-sol">
+          <div class="stars" aria-label="5 de 5">★★★★★</div>
+          <blockquote>“Mesa en la ventana sin reservar con días. Las pastas, una locura.”</blockquote>
+          <figcaption><b>Tomás</b> · Madrid · Mesa para 2</figcaption>
+        </figure>
+        <figure class="review">
+          <div class="stars" aria-label="4 de 5">★★★★☆</div>
+          <blockquote>“Lindo lugar, buena música. Ojo que el pool se llena rápido.”</blockquote>
+          <figcaption><b>Camille</b> · Lyon · Noche de pool</figcaption>
+        </figure>
+      </div>
+      <div class="rating-sum">
+        <strong>4,8</strong>
+        <div><span class="stars">★★★★★</span><span class="sm muted">212 reseñas de viajeros Guiño</span></div>
+      </div>
+    </section>
+
+    <!-- ============ CIERRE ============ -->
+    <section class="outro">
+      <img src="assets/img/gaviota.jpg" alt="Una chica ríe frente al mar mientras una gaviota le roba la comida" loading="lazy">
+      <p class="outro-type">Viving<br>the moment,<br>is a way of<br>traveling</p>
+      <span class="outro-tag">GUIÑO · Anywhere &amp; anytime</span>
+    </section>
+  </main>
+
+  <!-- Botón flotante -->
+  <button class="fab" data-open-sheet aria-label="Publicar cupo">
+    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+  </button>
+
+  <!-- ============ MENÚ LATERAL ============ -->
+  <div class="scrim" id="scrim" hidden></div>
+  <nav class="drawer" id="drawer" aria-label="Menú principal" aria-hidden="true">
+    <div class="drawer-head">
+      <img src="assets/img/vermut-vereda.jpg" alt="">
+      <div>
+        <b>Café Miller</b>
+        <span class="sm">Palermo Soho · Café &amp; vintage</span>
+      </div>
+      <button class="icon-btn" id="closeMenu" aria-label="Cerrar menú">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+
+    <ul class="nav">
+      <li><a href="#inicio" data-nav="inicio"><span class="n">01</span>Inicio</a>
+        <ul class="sub"><li><a href="#ofertas">Ofertas en vivo</a></li></ul></li>
+      <li><a href="#visitas" data-nav="visitas"><span class="n">02</span>Índice de visitas</a>
+        <ul class="sub">
+          <li><a href="#visitas-hora">Por hora</a></li>
+          <li><a href="#visitas-fuentes">Fuentes</a></li>
+          <li><a href="#visitas-viajeros">Viajeros</a></li>
+        </ul></li>
+      <li><a href="#hoy" data-nav="hoy"><span class="n">03</span>Cupos de hoy <em class="badge">6</em></a>
+        <ul class="sub">
+          <li><a href="#hoy-turnos">Turnos</a></li>
+          <li><a href="#hoy-sinconfirmar">Sin confirmar</a></li>
+          <li><a href="#hoy-espera">Lista de espera</a></li>
+        </ul></li>
+      <li><a href="#futuros" data-nav="futuros"><span class="n">04</span>Cupos futuros</a>
+        <ul class="sub">
+          <li><a href="#futuros-calendario">Calendario</a></li>
+          <li><a href="#futuros-programados">Programados</a></li>
+        </ul></li>
+      <li><a href="#resenas" data-nav="resenas"><span class="n">05</span>Reseñas</a></li>
+    </ul>
+
+    <ul class="nav-secondary">
+      <li><a href="#" data-toast="Perfil del lugar · próximamente en el prototipo">Perfil del lugar</a></li>
+      <li><a href="#" data-toast="Pagos y liquidaciones · próximamente en el prototipo">Pagos y liquidaciones</a></li>
+      <li><a href="#" data-toast="Ayuda · próximamente en el prototipo">Ayuda</a></li>
+    </ul>
+
+    <label class="switch-row">
+      <span><b>Visible en vivo</b><span class="sm">Los viajeros cerca te ven</span></span>
+      <input type="checkbox" id="liveToggle" checked>
+      <span class="switch" aria-hidden="true"></span>
+    </label>
+  </nav>
+
+  <!-- ============ HOJA: PUBLICAR CUPO ============ -->
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="true">
+    <div class="sheet-grip"></div>
+    <div class="sheet-head">
+      <h2 id="sheetTitle" class="h-card">Hacé un guiño</h2>
+      <button class="icon-btn" data-close-sheet aria-label="Cerrar">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <form id="publishForm">
+      <fieldset>
+        <legend>¿Qué ofrecés?</legend>
+        <div class="chips" data-group="tipo">
+          <button type="button" class="chip is-on" data-v="Mesa">Mesa</button>
+          <button type="button" class="chip" data-v="Experiencia">Experiencia</button>
+          <button type="button" class="chip" data-v="Barra">Lugar en barra</button>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>¿Para cuándo?</legend>
+        <div class="chips" data-group="hora">
+          <button type="button" class="chip is-on" data-v="Ahora">Ahora</button>
+          <button type="button" class="chip" data-v="20:30">20:30</button>
+          <button type="button" class="chip" data-v="21:00">21:00</button>
+          <button type="button" class="chip" data-v="21:30">21:30</button>
+          <button type="button" class="chip" data-v="22:00">22:00</button>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Lugares</legend>
+        <div class="stepper">
+          <button type="button" data-step="-1" aria-label="Menos">−</button>
+          <output id="lugares">2</output>
+          <button type="button" data-step="1" aria-label="Más">+</button>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>El guiño (opcional)</legend>
+        <div class="chips" data-group="extra">
+          <button type="button" class="chip is-on" data-v="">Sin extra</button>
+          <button type="button" class="chip" data-v="Copa de bienvenida">Copa de bienvenida</button>
+          <button type="button" class="chip" data-v="10% off">10% off</button>
+        </div>
+      </fieldset>
+      <div class="preview">
+        <span class="eyebrow dark">Así lo ven los viajeros</span>
+        <p id="previewText"><b>Mesa para 2 · Ahora</b><br>A 500 m: Café Miller, comida casera y moda vintage. ¿Te sumás?</p>
+      </div>
+      <button type="submit" class="btn btn-dark btn-xl">Publicar en vivo
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg>
+      </button>
+    </form>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
