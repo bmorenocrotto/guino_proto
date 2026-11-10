@@ -9,11 +9,12 @@ const fmt = n => n.toLocaleString('es-AR');
 
 /* ---------- Contenido de ejemplo ---------- */
 const ofertas = [
-  { titulo: 'Mesa para 2 en la ventana', sub: 'Hoy 21:30 · menú de pastas caseras', img: 'assets/img/mesa-noche.jpg', estado: 'reservado', visitas: 148, cupos: 2, ocupados: 2 },
-  { titulo: 'Cata de vermut en la vereda', sub: 'Hoy 19:00 · 3 vermuts + picada · $18.500', img: 'assets/img/vermut-vereda.jpg', estado: 'ultimos', visitas: 312, cupos: 8, ocupados: 6 },
-  { titulo: 'Barra de pastas al flash', sub: 'Hoy 22:00 · lugar en barra', img: 'assets/img/pasta-flash.jpg', estado: 'libre', visitas: 96, cupos: 4, ocupados: 0,
+  // tono = qué degradé usa la tarjeta (ver .tono-* en styles.css)
+  { titulo: 'Mesa para 2 en la ventana', hora: '21:30', tono: 'cafe', sub: 'Hoy 21:30 · menú de pastas caseras', img: 'assets/img/mesa-noche.jpg', estado: 'reservado', visitas: 148, cupos: 2, ocupados: 2 },
+  { titulo: 'Cata de vermut en la vereda', hora: '19:00', tono: 'vermut', sub: 'Hoy 19:00 · 3 vermuts + picada · $18.500', img: 'assets/img/vermut-vereda.jpg', estado: 'ultimos', visitas: 312, cupos: 8, ocupados: 6 },
+  { titulo: 'Barra de pastas al flash', hora: '22:00', tono: 'pasta', sub: 'Hoy 22:00 · lugar en barra', img: 'assets/img/pasta-flash.jpg', estado: 'libre', visitas: 96, cupos: 4, ocupados: 0,
     tip: 'Sumá una copa de bienvenida: las ofertas con extra reciben 2× más reservas después de las 21 h.' },
-  { titulo: 'Noche de pool + birra', sub: 'Hoy 23:00 · mesa de pool 1 h', img: 'assets/img/pool-bar.jpg', estado: 'libre', visitas: 54, cupos: 4, ocupados: 0 }
+  { titulo: 'Noche de pool + birra', hora: '23:00', tono: 'pool', sub: 'Hoy 23:00 · mesa de pool 1 h', img: 'assets/img/pool-bar.jpg', estado: 'libre', visitas: 54, cupos: 4, ocupados: 0 }
 ];
 
 const estados = {
@@ -61,29 +62,49 @@ function renderOfertas(filtro = 'todas') {
   $('#offers').innerHTML = lista.map((o, i) => {
     const st = estados[o.estado];
     const slots = Array.from({ length: o.cupos }, (_, k) => `<i class="${k < o.ocupados ? 'on' : ''}"></i>`).join('');
+    // Tarjeta: arriba horario + estado, en grande el nombre, abajo visitas + flecha.
+    // El detalle (.offer-body) está oculto y se abre con la flecha.
     return `
-    <article class="offer" style="animation-delay:${i * 70}ms">
-      <div class="offer-media">
-        <img src="${o.img}" alt="" loading="lazy">
+    <article class="offer tono-${o.tono || 'cafe'}" style="animation-delay:${i * 70}ms">
+      <div class="offer-media"><img src="${o.img}" alt="" loading="lazy"></div>
+      <div class="offer-top">
+        <span class="offer-hora">${o.hora}</span>
         <span class="offer-status ${st.cls}">${st.label}</span>
+      </div>
+      <h3 class="offer-name">${o.titulo}</h3>
+      <div class="offer-foot">
         <span class="offer-views">${ojo}${fmt(o.visitas)} visitas</span>
-        <div class="offer-title"><h3>${o.titulo}</h3><p>${o.sub}</p></div>
+        <button class="offer-toggle" aria-expanded="false" aria-label="Ver detalle de ${o.titulo}">
+          <svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg>
+        </button>
       </div>
       <div class="offer-body">
-        <div class="offer-meta">
-          <span>${o.ocupados} de ${o.cupos} ocupados</span>
-          <span class="slots" aria-hidden="true">${slots}</span>
-        </div>
-        ${o.tip ? `<p class="tip">${foco}<span>${o.tip}</span></p>` : ''}
-        <div class="offer-actions">
-          <button class="btn btn-ghost btn-sm" data-toast="Editar oferta · próximamente en el prototipo">Editar</button>
-          <button class="btn btn-dark btn-sm" data-toast="Oferta pausada. Ya no aparece en el mapa.">Pausar</button>
+        <div class="offer-body-in">
+          <p class="offer-sub">${o.sub}</p>
+          <div class="offer-meta">
+            <span>${o.ocupados} de ${o.cupos} ocupados</span>
+            <span class="slots" aria-hidden="true">${slots}</span>
+          </div>
+          ${o.tip ? `<p class="tip">${foco}<span>${o.tip}</span></p>` : ''}
+          <div class="offer-actions">
+            <button class="btn btn-ghost btn-sm" data-toast="Editar oferta · próximamente en el prototipo">Editar</button>
+            <button class="btn btn-dark btn-sm" data-toast="Oferta pausada. Ya no aparece en el mapa.">Pausar</button>
+          </div>
         </div>
       </div>
     </article>`;
   }).join('');
   $('#cntTodas').textContent = ofertas.length;
 }
+
+// Abrir / cerrar el detalle de una tarjeta con la flecha
+$('#offers').addEventListener('click', e => {
+  const t = e.target.closest('.offer-toggle');
+  if (!t) return;
+  const card = t.closest('.offer');
+  const open = card.classList.toggle('is-open');
+  t.setAttribute('aria-expanded', open);
+});
 
 $$('[data-filter]').forEach(b => b.addEventListener('click', () => {
   $$('[data-filter]').forEach(x => x.classList.toggle('is-on', x === b));
@@ -108,24 +129,49 @@ $$('[data-range]').forEach(b => b.addEventListener('click', () => {
 }));
 
 /* ---------- Turnos de hoy ---------- */
+const flechaFina = '<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+
+// Cada turno es una "franja" de color. El color depende del orden (c0 = más claro … c5 = más oscuro).
 function renderTurnos() {
-  const tipo = { o: '', g: 'guino', f: 'free' };
-  const legend = `<li class="legend"><span><i></i>Ocupada</span><span><i class="guino"></i>Llegó por Guiño</span><span><i class="free"></i>Libre</span></li>`;
-  $('#hoy-turnos').innerHTML = legend + turnos.map(t => {
+  // La lista de espera vive oculta en el HTML; la copiamos al detalle del próximo turno
+  const espera = $('#hoy-espera .wl')?.outerHTML || '';
+  const proximo = turnos.findIndex(t => !t.pasado);
+
+  $('#hoy-turnos').innerHTML = turnos.map((t, i) => {
+    const color = `c${Math.min(i, 5)}`;
+    // Turno que ya pasó: franja chica, solo la hora
+    if (t.pasado) return `<li class="strip ${color} is-past"><time>${t.hora}</time></li>`;
+
     const libres = t.mesas.filter(m => m === 'f').length;
+    const porGuino = t.mesas.filter(m => m === 'g').length;
+    const ocupacion = Math.round((t.mesas.length - libres) / t.mesas.length * 100);
+
     return `
-    <li class="turn ${t.pasado ? 'is-past' : ''}">
-      <time>${t.hora}</time>
-      <div>
-        <div class="turn-row">
-          <div><b>${t.titulo}</b><div class="sm muted">${t.detalle}</div></div>
-          ${!t.pasado && libres ? `<button class="btn-free" data-free="${t.hora}">Publicar ${libres}</button>` : ''}
+    <li class="strip ${color}">
+      <div class="strip-row">
+        <button class="strip-toggle" aria-expanded="false" aria-label="Ver detalle del turno de las ${t.hora}"><time>${t.hora}</time></button>
+        ${libres
+          ? `<button class="strip-go" data-free="${t.hora}" aria-label="Publicar ${libres} lugares de las ${t.hora}"><span>${libres} ${libres === 1 ? 'libre' : 'libres'}</span>${flechaFina}</button>`
+          : `<span class="strip-full">completo</span>`}
+      </div>
+      <div class="strip-bar" aria-hidden="true"><i style="width:${ocupacion}%"></i></div>
+      <div class="strip-detail">
+        <div class="strip-detail-in">
+          <p><b>${t.titulo}</b> · ${t.detalle}${porGuino ? ` · ${porGuino} por Guiño` : ''}</p>
+          ${i === proximo && espera ? `<p>En espera</p>${espera}` : ''}
         </div>
-        <div class="tables">${t.mesas.map(m => `<i class="${tipo[m]}"></i>`).join('')}</div>
       </div>
     </li>`;
   }).join('');
 }
+
+// Tocar la hora abre/cierra el detalle de esa franja
+$('#hoy-turnos').addEventListener('click', e => {
+  const t = e.target.closest('.strip-toggle');
+  if (!t) return;
+  const abierta = t.closest('.strip').classList.toggle('is-open');
+  t.setAttribute('aria-expanded', abierta);
+});
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-free]');
   if (!b || b.classList.contains('is-done')) return;
@@ -256,6 +302,8 @@ $('#publishForm').addEventListener('submit', e => {
   const que = form.tipo === 'Barra' ? 'Lugar en barra' : form.tipo;
   ofertas.unshift({
     titulo: `${que} para ${form.lugares}`,
+    hora: form.hora,
+    tono: 'ostras',
     sub: `Hoy ${form.hora}${form.extra ? ' · ' + form.extra.toLowerCase() : ''}`,
     img: form.tipo === 'Experiencia' ? 'assets/img/brindis-noche.jpg' : 'assets/img/ostras.jpg',
     estado: 'libre', visitas: 0, cupos: form.lugares, ocupados: 0
@@ -264,7 +312,7 @@ $('#publishForm').addEventListener('submit', e => {
   renderOfertas();
   closeSheet();
   toast('¡Listo! Tu guiño está en vivo a 500 m a la redonda.');
-  setTimeout(() => $('#ofertas').scrollIntoView({ behavior: 'smooth' }), 300);
+  setTimeout(() => goTo('ofertas'), 300);
 });
 
 /* ---------- Varios ---------- */
@@ -304,7 +352,32 @@ $$('[data-count]').forEach(el => {
   requestAnimationFrame(step);
 });
 
+/* ---------- Pantallas (una por área, cada una con su scroll) ----------
+   Cada <section> tiene data-view="home | visitas | futuros | resenas".
+   Se muestra solo la pantalla activa; las demás quedan con [hidden]. */
+const primerasSecciones = ['inicio', 'visitas', 'futuros', 'resenas'];
+function showView(name) {
+  $$('[data-view]').forEach(el => { el.hidden = el.dataset.view !== name; });
+}
+function route() {
+  const id = location.hash.slice(1) || 'inicio';
+  const el = document.getElementById(id);
+  const name = el?.closest('[data-view]')?.dataset.view || 'home';
+  showView(name);
+  // Menú: marca el área activa
+  const activo = name === 'home' ? (id.startsWith('hoy') ? 'hoy' : 'inicio') : name;
+  $$('[data-nav]').forEach(a => a.classList.toggle('is-active', a.dataset.nav === activo));
+  // Scroll: arriba de todo al entrar a una pantalla; o directo a la parte pedida
+  if (!el || primerasSecciones.includes(id)) scrollTo({ top: 0, behavior: 'instant' });
+  else el.scrollIntoView({ behavior: 'smooth' });
+}
+function goTo(id) {
+  if (location.hash === '#' + id) route(); else location.hash = id;
+}
+addEventListener('hashchange', route);
+
 /* ---------- Inicio ---------- */
+route();
 renderOfertas();
 renderChart('hoy');
 renderTurnos();

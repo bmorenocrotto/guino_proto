@@ -26,37 +26,45 @@
 
   <main>
     <!-- ============ INICIO ============ -->
-    <section id="inicio" class="section hero" data-section="inicio">
+    <section id="inicio" class="section hero" data-section="inicio" data-view="home">
       <div class="live-row">
         <span class="live-pill" id="livePill"><i></i> EN VIVO · visible a 500 m</span>
         <span class="date">Vie 6 nov · 20:14</span>
       </div>
-      <h1 class="h-display">Hola,<br><span class="hl">Café Miller.</span></h1>
-      <p class="lead">Te quedan <b>6 mesas</b> y <b>4 cupos</b> libres para hoy. Hacé un guiño y llenalos antes de las 22&nbsp;h.</p>
+      <h1 class="h-display">Hola,<br>Café Miller.</h1>
+      <p class="lead">Te quedan <b>6 mesas</b> y <b>4 cupos</b> libres hoy.</p>
       <button class="btn btn-sol btn-xl" data-open-sheet>
         Publicar cupo ahora
         <svg class="arrow" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg>
       </button>
+
+      <!-- Atajos a las otras pantallas -->
+      <nav class="quick" aria-label="Ir a otras áreas">
+        <a href="#visitas"><span>Ver visitas</span><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a href="#futuros"><span>Programar próximos días</span><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a href="#resenas"><span>Reseñas</span><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </nav>
     </section>
 
-    <!-- KPIs -->
-    <section class="kpis" aria-label="Resumen de hoy">
-      <article class="kpi kpi-dark">
-        <span class="kpi-label">Visitas hoy</span>
+    <!-- KPIs: oculto en la home (sin fecha ni contexto claro). Se puede reubicar en Visitas. -->
+    <section class="kpis is-hidden" data-view="home" aria-label="Resumen de hoy">
+      <article class="kpi">
+        <span class="kpi-label">Visitas</span>
         <strong class="kpi-num" data-count="1284">0</strong>
-        <span class="kpi-delta up">▲ 18% vs. viernes pasado</span>
+        <span class="kpi-delta is-hidden">▲ 18% vs. viernes pasado</span>
       </article>
       <article class="kpi">
-        <span class="kpi-label">Reservas por Guiño</span>
+        <span class="kpi-label">Reservas</span>
         <strong class="kpi-num" data-count="23">0</strong>
-        <span class="kpi-delta">61 personas sentadas</span>
+        <span class="kpi-delta is-hidden">61 personas sentadas</span>
       </article>
       <article class="kpi">
-        <span class="kpi-label">Ocupación ahora</span>
+        <span class="kpi-label">Ocupación</span>
         <strong class="kpi-num"><span data-count="72">0</span>%</strong>
-        <div class="meter"><i style="width:72%"></i></div>
+        <div class="meter is-hidden"><i style="width:72%"></i></div>
       </article>
-      <article class="kpi kpi-sol">
+      <!-- Oculto en el rediseño (no se borra): -->
+      <article class="kpi kpi-sol is-hidden">
         <span class="kpi-label">Ingresos por Guiño</span>
         <strong class="kpi-num kpi-num-sm">$486.300</strong>
         <span class="kpi-delta">hoy, hasta ahora</span>
@@ -64,10 +72,10 @@
     </section>
 
     <!-- OFERTAS -->
-    <section class="section" id="ofertas" data-section="inicio">
+    <section class="section" id="ofertas" data-section="inicio" data-view="home">
       <div class="sec-head">
-        <span class="eyebrow">Tus ofertas en vivo</span>
-        <h2 class="h-sec">Lo que se está viendo<br>ahora mismo</h2>
+        <span class="eyebrow"><span class="num">1</span> Tus ofertas</span>
+        <h2 class="h-sec">En vivo<br>ahora mismo</h2>
       </div>
       <div class="filters" role="tablist" aria-label="Filtrar ofertas">
         <button class="chip is-on" data-filter="todas">Todas · <span id="cntTodas">4</span></button>
@@ -78,7 +86,8 @@
     </section>
 
     <!-- ============ ÍNDICE DE VISITAS ============ -->
-    <section class="section band" id="visitas" data-section="visitas">
+    <section class="section band" id="visitas" data-section="visitas" data-view="visitas">
+      <a href="#inicio" class="back">← Inicio</a>
       <div class="sec-head">
         <span class="eyebrow">Índice de visitas</span>
         <h2 class="h-sec">Quién te mira,<br>cuándo y desde dónde</h2>
@@ -136,24 +145,23 @@
     </section>
 
     <!-- ============ CUPOS DE HOY ============ -->
-    <section class="section" id="hoy" data-section="hoy">
-      <div class="sec-head">
-        <span class="eyebrow">Oferta de cupos · hoy</span>
-        <h2 class="h-sec">Tu noche,<br>turno por turno</h2>
+    <section class="section hoy" id="hoy" data-section="hoy" data-view="home">
+      <div class="hoy-head">
+        <h2 class="hoy-title">hoy</h2>
+        <button class="plus" data-open-sheet aria-label="Agregar cupo">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
       </div>
 
-      <div class="alert" id="hoy-sinconfirmar">
-        <svg viewBox="0 0 24 24"><path d="M12 8v5M12 16.5v.5"/><circle cx="12" cy="12" r="9"/></svg>
-        <div>
-          <b>2 reservas sin confirmar a las 21:00</b>
-          <p class="sm">Si no confirman en 30 min, liberamos la mesa en Guiño.</p>
-        </div>
-        <button class="btn btn-ghost btn-sm" data-toast="Recordatorio enviado a 2 reservas.">Avisar</button>
-      </div>
+      <p class="hoy-pending" id="hoy-sinconfirmar">
+        2 sin confirmar a las 21
+        <button class="hoy-link" data-toast="Recordatorio enviado a 2 reservas.">→ avisar</button>
+      </p>
 
       <ol class="timeline" id="hoy-turnos"><!-- render js --></ol>
 
-      <div class="card waitlist" id="hoy-espera">
+      <!-- La lista de espera ahora se muestra dentro del detalle de la franja (la copia el JS). Esta tarjeta queda oculta, no borrada. -->
+      <div class="card waitlist" id="hoy-espera" hidden>
         <div class="row-between">
           <div>
             <span class="eyebrow dark">Lista de espera</span>
@@ -170,7 +178,8 @@
     </section>
 
     <!-- ============ CUPOS FUTUROS ============ -->
-    <section class="section band" id="futuros" data-section="futuros">
+    <section class="section band" id="futuros" data-section="futuros" data-view="futuros">
+      <a href="#inicio" class="back">← Inicio</a>
       <div class="sec-head">
         <span class="eyebrow">Oferta de cupos futuros</span>
         <h2 class="h-sec">Adelantate:<br>los próximos 7 días</h2>
@@ -190,7 +199,8 @@
     </section>
 
     <!-- ============ RESEÑAS ============ -->
-    <section class="section" id="resenas" data-section="resenas">
+    <section class="section" id="resenas" data-section="resenas" data-view="resenas">
+      <a href="#inicio" class="back">← Inicio</a>
       <div class="sec-head">
         <span class="eyebrow">Lo que dicen</span>
         <h2 class="h-sec h-spoiler">Spoiler:<br><span class="hl">valió el desvío.</span></h2>
